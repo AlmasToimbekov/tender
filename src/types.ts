@@ -9,13 +9,13 @@ interface BasicInfo {
   ceo: {
     value: {
       title: string;
-    };
+    } | null;
   };
   primaryOKED: {
     value: string;
   };
   secondaryOKED: {
-    value: string[];
+    value: string[] | null;
   };
   addressRu: {
     value: string;
@@ -23,10 +23,12 @@ interface BasicInfo {
 }
 
 interface GosZakupContacts {
-  phone: {
-    value: string;
-    href: string;
-  }[];
+  phone:
+    | {
+        value: string;
+        href: string;
+      }[]
+    | null;
   website: string | null;
   email: {
     value: string;

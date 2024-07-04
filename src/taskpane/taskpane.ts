@@ -75,12 +75,14 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
 
   // Map the data to the desired columns
   const mappedData = data.map((result) => [
-    result.basicInfo.ceo.value.title,
+    result.basicInfo.ceo.value?.title,
     result.basicInfo.addressRu.value,
-    result.gosZakupContacts?.phone.length > 0 ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
+    result.gosZakupContacts?.phone?.length > 0
+      ? result.gosZakupContacts.phone.map((item) => item.value).join("; ")
+      : "",
     result.basicInfo.registrationDate.value,
     result.basicInfo.primaryOKED.value,
-    result.basicInfo.secondaryOKED.value.join("; "),
+    result.basicInfo.secondaryOKED.value?.join("; "),
   ]);
 
   // Headers
@@ -101,9 +103,23 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
     const headerRange = sheet.getRangeByIndexes(0, startColumn, 1, headers.length);
     headerRange.values = [headers];
 
+    headerRange.copyFrom(sheet.getRange("A1"), "Formats");
+
     // Insert data
     const dataRange = sheet.getRangeByIndexes(startRow, startColumn, mappedData.length, mappedData[0].length);
     dataRange.values = mappedData;
+
+    dataRange.format.autofitColumns();
+
+    // Set fixed width and enable text wrapping for 'primary' and 'secondary' columns
+    const fixedWidthColumns = [1, 4, 5]; // Indexes of 'address', 'primary', and 'secondary' columns
+    const fixedWidth = 400;
+
+    fixedWidthColumns.forEach((index) => {
+      const columnRange = sheet.getRangeByIndexes(startRow, startColumn + index, mappedData.length + 1, 1);
+      columnRange.format.columnWidth = fixedWidth;
+      columnRange.format.wrapText = true;
+    });
 
     await context.sync();
   });
