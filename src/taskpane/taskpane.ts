@@ -18,17 +18,27 @@ export async function run() {
   try {
     await Excel.run(async (context) => {
       const range = context.workbook.getSelectedRange();
-      range.load("values, address");
+      range.load("rowIndex, rowCount");
       await context.sync();
 
-      // Extract IDs from the selected range
-      const ids = range.values.map((row) => row[2]); // Assuming the ID is in the third column (index 2)
+      // Calculate the new range address (columns A to F)
+      const startRow = range.rowIndex + 1; // Excel row indices are 1-based
+      const endRow = startRow + range.rowCount - 1;
+      const newRangeAddress = `A${startRow}:F${endRow}`;
+
+      // Get the new range that spans columns A to F
+      const newRange = context.workbook.worksheets.getActiveWorksheet().getRange(newRangeAddress);
+      newRange.load("values");
+      await context.sync();
+
+      // Extract IDs from the new range
+      const ids = newRange.values.map((row) => row[2]); // Assuming the ID is in the third column (index 2)
 
       // Fetch data for the extracted IDs
       const data = await fetchData(ids);
 
       // Populate Excel with the fetched data
-      await populateExcel(data, range.address);
+      await populateExcel(data, newRangeAddress);
     });
   } catch (error) {
     console.error(error);
@@ -95,7 +105,7 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
     await context.sync();
 
     // Calculate the starting cell for the new data
-    const startColumn = selectedRange.columnIndex + 6; // Assuming the Date column is the 6th column (index 5)
+    const startColumn = 6; // Assuming the Date column is the 6th column (index 5)
     const startRow = selectedRange.rowIndex;
 
     // Insert headers

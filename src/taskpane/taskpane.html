@@ -3,11 +3,10 @@
 
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Contoso Task Pane Add-in</title>
 
     <!-- Office JavaScript API -->
@@ -25,14 +24,18 @@
 
   <body class="ms-font-m ms-welcome ms-Fabric">
     <header class="ms-welcome__header ms-bgColor-neutralLighter">
-        <img width="90" height="90" src="../../assets/logo-filled.png" alt="Tender" title="Tender" />
+      <img width="90" height="90" src="../../assets/logo-filled.png" alt="Tender" title="Tender" />
     </header>
     <main id="app-body" class="ms-welcome__main" style="display: none">
       <h2 class="ms-font-xl">Правила работы с расширением</h2>
       <ul class="ms-List ms-welcome__features">
         <li class="ms-ListItem">
           <i class="ms-Icon ms-Icon--UnstackSelected ms-font-xl"></i>
-          <span class="ms-font-m">Выделите диапазон ячеек (столбцы A-F) где указаны БИНы для получения информации</span>
+          <span class="ms-font-m"
+            >Выделите нужные строки, где указаны БИНы для которых нужно обновить данные. Не выбирайте слишком много за
+            раз, т.к. это займет время, кроме того, при большом количестве запросов, источник данных может временно
+            заблокировать отправку данных.</span
+          >
         </li>
         <li class="ms-ListItem">
           <i class="ms-Icon ms-Icon--Calculator ms-font-xl"></i>
