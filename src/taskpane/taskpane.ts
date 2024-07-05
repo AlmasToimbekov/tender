@@ -9,8 +9,15 @@ import { CompanyFullInfo } from "../types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
-    document.getElementById("app-body").style.display = "flex";
-    document.getElementById("run").onclick = run;
+    const appBody = document.getElementById("app-body");
+    if (appBody) {
+      appBody.style.display = "flex";
+    }
+
+    const runButton = document.getElementById("run");
+    if (runButton) {
+      runButton.onclick = run;
+    }
   }
 });
 
@@ -55,6 +62,14 @@ export async function run() {
 async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
   try {
     const results: CompanyFullInfo[] = [];
+    const defaultBasicInfo = {
+      registrationDate: { value: null },
+      onMarket: null,
+      ceo: { value: { title: "Пользователь не найден" } },
+      primaryOKED: { value: "" },
+      secondaryOKED: { value: null },
+      addressRu: { value: "" },
+    };
 
     for (const id of ids) {
       let response = await fetch(`https://apiba.prgapp.kz/CompanyFullInfo?id=${id}&lang=ru`, {
@@ -75,8 +90,13 @@ async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
         method: "GET",
       });
 
-      let data: CompanyFullInfo = await response.json();
-      results.push(data);
+      if (!response.ok) {
+        results.push({ basicInfo: defaultBasicInfo, gosZakupContacts: null });
+        continue;
+      }
+
+      const data: CompanyFullInfo = await response.json();
+      if (data) results.push(data);
     }
 
     return results;
@@ -87,15 +107,11 @@ async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
 }
 
 async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: string) {
-  console.log("selectedRangeAddress", selectedRangeAddress);
-
   // Map the data to the desired columns
   const mappedData = data.map((result) => [
     result.basicInfo.ceo.value?.title,
     result.basicInfo.addressRu.value,
-    result.gosZakupContacts?.phone?.length > 0
-      ? result.gosZakupContacts.phone.map((item) => item.value).join("; ")
-      : "",
+    result.gosZakupContacts?.phone ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
     result.basicInfo.registrationDate.value,
     result.basicInfo.primaryOKED.value,
     result.basicInfo.secondaryOKED.value?.join("; "),
