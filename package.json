@@ -6,6 +6,7 @@
     "url": "https://github.com/OfficeDev/Office-Addin-TaskPane.git"
   },
   "license": "MIT",
+  "homepage": "https://AlmasToimbekov.github.io/tender",
   "config": {
     "app_to_debug": "excel",
     "app_type_to_debug": "desktop",
@@ -14,6 +15,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
+    "deploy": "gh-pages -d dist",
     "dev-server": "webpack serve --mode development",
     "lint": "office-addin-lint check",
     "lint:fix": "office-addin-lint fix",
@@ -40,6 +42,7 @@
     "copy-webpack-plugin": "^12.0.2",
     "eslint-plugin-office-addins": "^2.1.8",
     "file-loader": "^6.2.0",
+    "gh-pages": "^6.1.1",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.6.0",
     "office-addin-cli": "^1.5.9",
