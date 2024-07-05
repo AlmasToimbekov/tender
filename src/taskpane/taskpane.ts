@@ -1,4 +1,4 @@
-import { CompanyFullInfo } from "../types";
+import { CompanyFullInfo, BasicInfo } from "../types";
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
@@ -60,61 +60,70 @@ export async function run() {
 }
 
 async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
-  try {
-    const results: CompanyFullInfo[] = [];
-    const defaultBasicInfo = {
-      registrationDate: { value: null },
-      onMarket: null,
-      ceo: { value: { title: "Пользователь не найден" } },
-      primaryOKED: { value: "" },
-      secondaryOKED: { value: null },
-      addressRu: { value: "" },
-    };
+  const defaultBasicInfo: BasicInfo = {
+    isDeleted: false,
+    registrationDate: { value: null },
+    onMarket: null,
+    ceo: { value: { title: "Пользователь не найден" } },
+    primaryOKED: { value: "" },
+    secondaryOKED: { value: null },
+    addressRu: { value: "" },
+  };
 
-    for (const id of ids) {
-      let response = await fetch(`https://apiba.prgapp.kz/CompanyFullInfo?id=${id}&lang=ru`, {
-        headers: {
-          accept: "*/*",
-          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,ru;q=0.7",
-          priority: "u=1, i",
-          "sec-ch-ua": '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": '"Windows"',
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "cross-site",
-          Referer: "https://ba.prg.kz/",
-          "Referrer-Policy": "strict-origin-when-cross-origin",
-        },
-        body: null,
-        method: "GET",
-      });
+  const fetchPromises = ids.map(async (id) => {
+    const response = await fetch(`https://apiba.prgapp.kz/CompanyFullInfo?id=${id}&lang=ru`, {
+      headers: {
+        accept: "*/*",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,ru;q=0.7",
+        priority: "u=1, i",
+        "sec-ch-ua": '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "cross-site",
+        Referer: "https://ba.prg.kz/",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+      },
+      body: null,
+      method: "GET",
+    });
 
-      if (!response.ok) {
-        results.push({ basicInfo: defaultBasicInfo, gosZakupContacts: null });
-        continue;
-      }
-
-      const data: CompanyFullInfo = await response.json();
-      if (data) results.push(data);
+    if (!response.ok) {
+      throw new Error(`Error fetching data for ID ${id}: ${response.statusText}`);
     }
 
-    return results;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
+    const data: CompanyFullInfo = await response.json();
+    return data;
+  });
+
+  const results = await Promise.allSettled(fetchPromises);
+
+  return results.map((result) => {
+    if (result.status === "fulfilled" && !(result.value instanceof Error)) {
+      return result.value;
+    } else {
+      const error = result.status === "rejected" ? result.reason : result.value;
+      return {
+        basicInfo: {
+          ...defaultBasicInfo,
+          ceo: { value: { title: error.message ?? error } },
+        },
+        gosZakupContacts: null,
+      };
+    }
+  });
 }
 
 async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: string) {
   // Map the data to the desired columns
   const mappedData = data.map((result) => [
-    result.basicInfo.ceo.value?.title,
-    result.basicInfo.addressRu.value,
+    result.basicInfo.isDeleted ? "Организация удалена в источниках" : result.basicInfo.ceo.value?.title ?? "",
+    result.basicInfo.addressRu.value ?? "",
     result.gosZakupContacts?.phone ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
-    result.basicInfo.registrationDate.value,
-    result.basicInfo.primaryOKED.value,
-    result.basicInfo.secondaryOKED.value?.join("; "),
+    result.basicInfo.registrationDate.value ?? "",
+    result.basicInfo.primaryOKED.value ?? "",
+    result.basicInfo.secondaryOKED.value?.join("; ") ?? "",
   ]);
 
   // Headers

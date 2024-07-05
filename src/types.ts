@@ -1,4 +1,5 @@
-interface BasicInfo {
+export interface BasicInfo {
+  isDeleted: boolean;
   registrationDate: {
     value: string | null;
   };
