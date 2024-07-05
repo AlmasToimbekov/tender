@@ -1,4 +1,5 @@
 import { enrichData } from "./enrich-data";
+import { createViews } from "./create-views";
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
@@ -17,6 +18,11 @@ Office.onReady((info) => {
     const enrichButton = document.getElementById("enrichData");
     if (enrichButton) {
       enrichButton.onclick = enrichData;
+    }
+
+    const createViewsButton = document.getElementById("createViews");
+    if (createViewsButton) {
+      createViewsButton.onclick = createViews;
     }
   }
 });
