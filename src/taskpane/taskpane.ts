@@ -15,6 +15,10 @@ Office.onReady((info) => {
 });
 
 export async function run() {
+  const runButton = document.getElementById("run") as HTMLButtonElement;
+  runButton.disabled = true; // Disable the button
+  runButton.classList.add("disabled"); // Add a class for styling
+
   try {
     await Excel.run(async (context) => {
       const range = context.workbook.getSelectedRange();
@@ -42,6 +46,9 @@ export async function run() {
     });
   } catch (error) {
     console.error(error);
+  } finally {
+    runButton.disabled = false; // Re-enable the button
+    runButton.classList.remove("disabled"); // Remove the class for styling
   }
 }
 
