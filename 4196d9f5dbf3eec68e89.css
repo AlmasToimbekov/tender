@@ -61,38 +61,52 @@ ul {
   margin-right: 10px;
 }
 
-.ms-welcome__action.ms-Button--hero {
-  margin-top: 30px;
-  background-color: #0078d7; /* Button background color */
+.button-container {
+  display: flex; /* Use flexbox to align buttons in a row */
+  gap: 20px; /* Space between buttons */
+  margin-top: 30px; /* Margin for the container */
+}
+
+.button {
+  background-color: #0078d7; /* Default button background color */
   border: none; /* Remove border */
   color: white; /* Text color */
   padding: 10px 20px; /* Padding for the button */
   border-radius: 5px; /* Rounded corners */
   text-align: center; /* Center the text */
-  display: inline-block; /* Inline-block display */
   font-size: 16px; /* Font size */
   transition: background-color 0.3s ease; /* Smooth transition for background color */
-}
-
-.ms-Button.ms-Button--hero .ms-Button-label {
-  color: white; /* Text color */
-}
-
-.ms-Button.ms-Button--hero:hover,
-.ms-Button.ms-Button--hero:focus {
-  background-color: #005a9e; /* Darker background color on hover/focus */
   cursor: pointer; /* Pointer cursor on hover */
 }
-.ms-Button.ms-Button--hero:active {
+
+.button:hover,
+.button:focus {
+  background-color: #005a9e; /* Darker background color on hover/focus */
+}
+
+.button:active {
   background-color: #0094ff; /* Brighter background color on click */
 }
 
-.ms-Button.ms-Button--hero.disabled {
+.button.disabled {
   background-color: #cccccc; /* Grey background color for disabled state */
   cursor: not-allowed; /* Not-allowed cursor for disabled state */
-}
-.ms-Button.ms-Button--hero.disabled .ms-Button-label {
   color: #666666; /* Grey text color for disabled state */
+}
+
+/* Style for the secondary button */
+.button-secondary {
+  background-color: #ff5722; /* Different background color for the secondary button */
+}
+
+.button-secondary:hover,
+.button-secondary:focus {
+  background-color: #e64a19; /* Darker background color on hover/focus for the secondary button */
+}
+
+.button-secondary:active {
+  background-color: #ff7043; /* Brighter background color on click for the secondary button */
+}
 
 b {
   font-weight: bold;
