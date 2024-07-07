@@ -111,7 +111,7 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
     return [
       result.basicInfo.isDeleted ? "Организация удалена в источниках" : result.basicInfo.ceo.value?.title ?? "",
       result.basicInfo.addressRu.value ?? "",
-      address?.city ?? address?.region ?? "",
+      address?.city ? address.city : address?.region ?? "",
       result.gosZakupContacts?.phone ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
       result.basicInfo.registrationDate.value ?? "",
       result.basicInfo.primaryOKED.value ?? "",
