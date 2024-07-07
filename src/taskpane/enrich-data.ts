@@ -45,13 +45,20 @@ async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
     isDeleted: false,
     registrationDate: { value: null },
     onMarket: null,
-    ceo: { value: { title: "Пользователь не найден" } },
+    ceo: { value: { title: "" } },
     primaryOKED: { value: "" },
     secondaryOKED: { value: null },
     addressRu: { value: "" },
   };
 
   const fetchPromises = ids.map(async (id) => {
+    if (!id) {
+      return {
+        basicInfo: defaultBasicInfo,
+        gosZakupContacts: null,
+      } as CompanyFullInfo;
+    }
+
     const response = await fetch(`https://apiba.prgapp.kz/CompanyFullInfo?id=${id}&lang=ru`, {
       headers: {
         accept: "*/*",

@@ -24,14 +24,21 @@
       <img width="90" height="90" src="../../assets/logo-filled.png" alt="Tender" title="Tender" />
     </header>
     <main id="app-body" class="ms-welcome__main" style="display: none">
+      <div class="button-container">
+        <div role="button" id="enrichData" class="button button-primary">
+          <span class="button-label">Получить данные</span>
+        </div>
+        <div role="button" id="createViews" class="button button-secondary">
+          <span class="button-label">Создать отображения</span>
+        </div>
+      </div>
       <h2 class="ms-font-xl">Правила работы с расширением</h2>
       <ul class="ms-List ms-welcome__features">
         <li class="ms-ListItem">
           <i class="ms-Icon ms-Icon--UnstackSelected ms-font-xl"></i>
           <span class="ms-font-m"
-            >Выделите нужные строки, где указаны БИНы для которых нужно обновить данные. Не выбирайте слишком много за
-            раз, т.к. это займет время, кроме того, при большом количестве запросов, источник данных может временно
-            заблокировать отправку данных.</span
+            >Выделите нужные строки, где указаны БИНы для которых нужно обновить данные. При большом количестве
+            запросов, источник данных может временно заблокировать отправку.</span
           >
         </li>
         <li class="ms-ListItem">
@@ -46,14 +53,14 @@
             необходимости модификаций может потребоваться изменение кода.</span
           >
         </li>
+        <li class="ms-ListItem">
+          <i class="ms-Icon ms-Icon--Copy ms-font-xl"></i>
+          <span class="ms-font-m"
+            >Когда нужные данные получены и таблица готова для анализа, нажимите кнопку "Создать виды для текущего
+            листа", чтобы отобразить текущий лист на новые листы с отдельной сортировкой столбцов..</span
+          >
+        </li>
       </ul>
-      <div role="button" id="enrichData" class="ms-welcome__action ms-Button ms-Button--hero ms-font-xl">
-        <span class="ms-Button-label">Получить данные</span>
-      </div>
-      <div role="button" id="createViews" class="ms-welcome__action ms-Button ms-Button--hero ms-font-xl">
-        <span class="ms-Button-label">Создать отображения</span>
-      </div>
-      <p><label id="item-subject"></label></p>
     </main>
   </body>
 </html>
