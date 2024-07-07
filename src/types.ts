@@ -23,6 +23,11 @@ export interface BasicInfo {
   };
 }
 
+export interface AddressInfo {
+  city: string;
+  region: string;
+}
+
 interface GosZakupContacts {
   phone:
     | {

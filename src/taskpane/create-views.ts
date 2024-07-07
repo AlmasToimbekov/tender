@@ -20,7 +20,7 @@ export async function createViews() {
 
       // Create and sort the sheets
       await createAndSortSheet(sheet, priceSheetName, 3, context); // 4th column (Цена за единицу)
-      await createAndSortSheet(sheet, addressSheetName, 7, context); // 8th column (address)
+      await createAndSortSheet(sheet, addressSheetName, 8, context); // 9th column (city)
 
       await context.sync();
     });

@@ -1,4 +1,4 @@
-import { CompanyFullInfo, BasicInfo } from "../types";
+import { CompanyFullInfo, BasicInfo, AddressInfo } from "../types";
 
 /* global Excel */
 
@@ -105,17 +105,22 @@ async function fetchData(ids: string[]): Promise<CompanyFullInfo[]> {
 
 async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: string) {
   // Map the data to the desired columns
-  const mappedData = data.map((result) => [
-    result.basicInfo.isDeleted ? "Организация удалена в источниках" : result.basicInfo.ceo.value?.title ?? "",
-    result.basicInfo.addressRu.value ?? "",
-    result.gosZakupContacts?.phone ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
-    result.basicInfo.registrationDate.value ?? "",
-    result.basicInfo.primaryOKED.value ?? "",
-    result.basicInfo.secondaryOKED.value?.join("; ") ?? "",
-  ]);
+  const mappedData = data.map((result) => {
+    const address = extractCityAndRegion(result.basicInfo.addressRu.value);
+
+    return [
+      result.basicInfo.isDeleted ? "Организация удалена в источниках" : result.basicInfo.ceo.value?.title ?? "",
+      result.basicInfo.addressRu.value ?? "",
+      address?.city ?? address?.region ?? "",
+      result.gosZakupContacts?.phone ? result.gosZakupContacts.phone.map((item) => item.value).join("; ") : "",
+      result.basicInfo.registrationDate.value ?? "",
+      result.basicInfo.primaryOKED.value ?? "",
+      result.basicInfo.secondaryOKED.value?.join("; ") ?? "",
+    ];
+  });
 
   // Headers
-  const headers = ["name", "address", "phone", "registration", "primary", "secondary"];
+  const headers = ["name", "address", "city", "phone", "registration", "primary", "secondary"];
 
   // Populate the Excel sheet
   await Excel.run(async (context) => {
@@ -141,7 +146,7 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
     dataRange.format.autofitColumns();
 
     // Set fixed width and enable text wrapping for 'primary' and 'secondary' columns
-    const fixedWidthColumns = [1, 4, 5]; // Indexes of 'address', 'primary', and 'secondary' columns
+    const fixedWidthColumns = [1, 5, 6]; // Indexes of 'address', 'primary', and 'secondary' columns
     const fixedWidth = 400;
 
     fixedWidthColumns.forEach((index) => {
@@ -152,4 +157,27 @@ async function populateExcel(data: CompanyFullInfo[], selectedRangeAddress: stri
 
     await context.sync();
   });
+}
+
+function extractCityAndRegion(address: string | null): AddressInfo | null {
+  if (!address) {
+    return null;
+  }
+  address = address.replace(/Г\.А\.,\s*/g, "").toLowerCase();
+
+  // Define regular expressions for matching city and region
+  // const cityRegex = /Г\.\s*([А-ЯЁа-яё\s]+)/;
+  const cityRegex = /(?:г\.|город)\s*([а-яё\s]+)/;
+
+  const regionRegex = /([а-яё\s]+(?:область))/;
+
+  // Extract city
+  const cityMatch = address.match(cityRegex);
+  const city = cityMatch ? cityMatch[1].trim().toUpperCase() : "";
+
+  // Extract region
+  const regionMatch = address.match(regionRegex);
+  const region = regionMatch ? regionMatch[1].trim().toUpperCase() : "";
+
+  return { city, region };
 }
