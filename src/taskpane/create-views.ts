@@ -11,16 +11,19 @@ export async function createViews() {
       await context.sync();
 
       // Sheet names
+      const dateSheetName = "по подаче";
       const priceSheetName = "по цене";
       const addressSheetName = "по адресу";
 
       // Remove sheets if they exist
+      await removeSheetIfExists(dateSheetName, context);
       await removeSheetIfExists(priceSheetName, context);
       await removeSheetIfExists(addressSheetName, context);
 
       // Create and sort the sheets
-      await createAndSortSheet(sheet, priceSheetName, 3, context); // 4th column (Цена за единицу)
       await createAndSortSheet(sheet, addressSheetName, 8, context); // 9th column (city)
+      await createAndSortSheet(sheet, priceSheetName, 3, context); // 4th column (Цена за единицу)
+      await createAndSortSheet(sheet, dateSheetName, 5, context); // 6th column (Дата и время подачи заявки)
 
       await context.sync();
     });
