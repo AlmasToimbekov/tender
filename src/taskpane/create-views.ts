@@ -62,5 +62,9 @@ async function createAndSortSheet(
     },
   ]);
 
-  await context.sync();
+  try {
+    await context.sync();
+  } catch (error) {
+    console.log(error);
+  }
 }
